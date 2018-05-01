@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace AEDCore
+namespace AEDCore.Models
 {
     /// <summary>
     /// Plain-old CLR object represents event.
@@ -19,7 +19,5 @@ namespace AEDCore
         public DateTime DateTime { get; set; }
 
         public string Message { get; set; }
-
-        public int[] Symptom { get; set; }
     }
 }

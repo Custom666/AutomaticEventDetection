@@ -1,6 +1,5 @@
-﻿using System;
+﻿using AEDCore.Models;
 using System.Collections.Generic;
-using System.Text;
 
 namespace AEDCore.Interfaces
 {
@@ -13,6 +12,7 @@ namespace AEDCore.Interfaces
         /// Generate symptom from every given <see cref="EventModel"/>
         /// </summary>
         /// <param name="models">List of input event models</param>
-        void GenerateSymptoms(IList<EventModel> models);
+        /// <returns>List of <see cref="SymptomModel"/></returns> 
+        IList<SymptomModel> GenerateSymptoms(IList<EventModel> models);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using AEDCore.Interfaces;
+using AEDCore.Models;
 
 namespace AEDCore.SymptomAlgorithms
 {
@@ -11,9 +10,11 @@ namespace AEDCore.SymptomAlgorithms
     {
         private static readonly char[] WORD_SPLIT_PATTERN = 
             {' ', ',', '.', '!', '?', ':', ';', '(', ')', '/', '\\', '-', '"', '–', '‘', '|', '“'};
-            
-        public void GenerateSymptoms(IList<EventModel> models)
+
+        public IList<SymptomModel> GenerateSymptoms(IList<EventModel> models)
         {
+            var result = new List<SymptomModel>();
+
             // initialize dictionary
             var dictionary = getDictionary(models.Select(m => m.Message).ToArray());
 
@@ -21,19 +22,24 @@ namespace AEDCore.SymptomAlgorithms
             foreach (var eventModel in models)
             {
                 // initialize vector
-                eventModel.Symptom = new int[dictionary.Count];
+                var symptom = new SymptomModel(dictionary.Count);
 
                 // get all words in event message
                 var words = eventModel.Message.Split(WORD_SPLIT_PATTERN, StringSplitOptions.RemoveEmptyEntries);
 
-                // find word index in dictionary
                 foreach (var word in words)
                 {
+                    // find word index in dictionary
                     var index = dictionary.IndexOf(word.ToLower());
 
-                    eventModel.Symptom[index]++;
+                    // increase word count in symptom
+                    symptom.Symptom[index]++;
                 }
+
+                result.Add(symptom);
             }
+
+            return result;
         }
 
         private IList<string> getDictionary(IEnumerable<string> messages)
@@ -47,7 +53,7 @@ namespace AEDCore.SymptomAlgorithms
                 foreach (var word in words) if(!dictionary.Contains(word.ToLower())) dictionary.Add(word.ToLower());
             }
 
-            dictionary.Sort();
+            //dictionary.Sort();
 
             return dictionary;
         }

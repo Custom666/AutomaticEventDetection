@@ -19,7 +19,7 @@ namespace AEDConcole
             if (events == null) return;
 
             ISymptomAlgorithm symtopmAlgorithm;
-            IDetectionMethod detectionMethod;
+            IClusteringMethod detectionMethod;
             
             switch (args[1].ToLower())
             {
