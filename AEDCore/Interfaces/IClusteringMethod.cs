@@ -5,6 +5,8 @@ namespace AEDCore.Interfaces
 {
     public interface IClusteringMethod
     {
-        IList<ClusterModel> Clusterize(IList<SymptomModel> symptoms);
+        IReadOnlyList<ClusterModel> Clusters { get; }
+
+        void Clusterize(IList<SymptomModel> symptoms);
     }
 }

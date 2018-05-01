@@ -10,7 +10,7 @@ namespace AEDConcole
     {
         private static void Main(string[] args)
         {
-            if(args.Length < 3 || args.Length > 3) return;
+            if (args.Length < 3 || args.Length > 3) return;
 
             var parser = new EventsParser();
 
@@ -19,8 +19,8 @@ namespace AEDConcole
             if (events == null) return;
 
             ISymptomAlgorithm symtopmAlgorithm;
-            IClusteringMethod detectionMethod;
-            
+            IClusteringMethod method;
+
             switch (args[1].ToLower())
             {
                 case "bow":
@@ -37,30 +37,34 @@ namespace AEDConcole
 
             switch (args[2].ToLower())
             {
-                case "mdm":
+                case "km":
 
-                    detectionMethod = new MinimalDistanceMethod();
+                    method = new KMeansMethod(Enum.GetValues(typeof(EventType)).Length);
 
                     break;
                 default:
 
-                    Console.WriteLine("There is no such detection method that you requested!");
+                    Console.WriteLine("There is no such clustering method that you requested!");
 
                     return;
             }
 
             Console.WriteLine("Generating symtoms...");
 
-            symtopmAlgorithm.GenerateSymptoms(events);
+            var symptoms = symtopmAlgorithm.GenerateSymptoms(events);
 
             Console.WriteLine("Symptoms generated successfully.");
+            Console.WriteLine($"There are { symptoms.Count } symptoms.");
 
-            Console.WriteLine("Learning...");
+            Console.WriteLine("Clustering...");
 
-            detectionMethod.Learn(events);
+            method.Clusterize(symptoms);
 
-            Console.WriteLine("Learning done.");
+            Console.WriteLine("Clustering done.");
 
+            foreach (var cluster in method.Clusters)
+                Console.WriteLine($"Cluster { cluster.Name } has { cluster.Symptoms.Count } symptoms.");
+            
             Console.ReadKey();
         }
     }
