@@ -64,8 +64,6 @@ namespace AEDConcole
 
             foreach (var cluster in method.Clusters)
                 Console.WriteLine($"Cluster { cluster.Name } has { cluster.Symptoms.Count } symptoms.");
-            
-            Console.ReadKey();
         }
     }
 }
