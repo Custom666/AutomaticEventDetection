@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AEDCore;
 using AEDCore.DetectionMethods;
 using AEDCore.Interfaces;
+using AEDCore.Models;
 using AEDCore.SymptomAlgorithms;
 
 namespace AEDConcole
@@ -19,13 +22,19 @@ namespace AEDConcole
             if (events == null) return;
 
             ISymptomAlgorithm symtopmAlgorithm;
-            IClusteringMethod method;
+            IDetectionMethod method;
 
             switch (args[1].ToLower())
             {
                 case "bow":
 
                     symtopmAlgorithm = new BagOfWords();
+
+                    break;
+
+                case "tf-idf":
+
+                    symtopmAlgorithm = new TermFrequencyInverseDocumentFrequency();
 
                     break;
                 default:
@@ -37,10 +46,10 @@ namespace AEDConcole
 
             switch (args[2].ToLower())
             {
-                case "km":
+                case "mdm":
 
-                    method = new KMeansMethod(Enum.GetValues(typeof(EventType)).Length);
-
+                    method = new MinimalDistanceMethod();
+                    
                     break;
                 default:
 
@@ -51,19 +60,81 @@ namespace AEDConcole
 
             Console.WriteLine("Generating symtoms...");
 
-            var symptoms = symtopmAlgorithm.GenerateSymptoms(events);
+            symtopmAlgorithm.GenerateSymptoms(events);
 
             Console.WriteLine("Symptoms generated successfully.");
-            Console.WriteLine($"There are { symptoms.Count } symptoms.");
+            Console.WriteLine($"There are { events.Count(s => s.SymptomModel != null) } symptoms.");
 
-            Console.WriteLine("Clustering...");
+            Console.WriteLine("Making etalons...");
 
-            method.Clusterize(symptoms);
+            var symptomLength = events[0].SymptomModel.Length;
 
-            Console.WriteLine("Clustering done.");
+            var etalons = new List<ClusterModel>
+            {
+                new ClusterModel
+                {
+                    Type = EventType.Agriculture,
+                    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                    Events = events.Where(e => e.EventType == EventType.Agriculture).ToList()
+                },
+                new ClusterModel
+                {
+                    Type = EventType.Crimes,
+                    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                    Events = events.Where(e => e.EventType == EventType.Crimes).ToList()
+                },
+                new ClusterModel
+                {
+                    Type = EventType.Culture,
+                    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                    Events = events.Where(e => e.EventType == EventType.Culture).ToList()
+                },
+                new ClusterModel
+                {
+                    Type = EventType.Industry,
+                    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                    Events = events.Where(e => e.EventType == EventType.Industry).ToList()
+                },
+                //new ClusterModel
+                //{
+                //    Type = EventType.None,
+                //    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                //    Events = events.Where(e => e.EventType == EventType.None).ToList()
+                //},
+                new ClusterModel
+                {
+                    Type = EventType.Other,
+                    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                    Events = events.Where(e => e.EventType == EventType.Other).ToList()
+                },
+                new ClusterModel
+                {
+                    Type = EventType.Politics,
+                    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                    Events = events.Where(e => e.EventType == EventType.Politics).ToList()
+                },
+                new ClusterModel
+                {
+                    Type = EventType.Sport,
+                    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                    Events = events.Where(e => e.EventType == EventType.Sport).ToList()
+                },
+                new ClusterModel
+                {
+                    Type = EventType.Weather,
+                    Centroid = new EventModel() { SymptomModel = new SymptomModel(symptomLength) },
+                    Events = events.Where(e => e.EventType == EventType.Weather).ToList()
+                },
+            };
 
-            foreach (var cluster in method.Clusters)
-                Console.WriteLine($"Cluster { cluster.Name } has { cluster.Symptoms.Count } symptoms.");
+            Console.WriteLine("Detection...");
+
+            var clusters = method.Detect(events, etalons);
+
+            Console.WriteLine("Detecting done.");
+
+            for (var index = 0; index < clusters.Count; index++)
+                Console.WriteLine($"Cluster { clusters[index].Type } contain { clusters[index].Events.Count } symptoms and it should have { etalons[index].Events.Count }");
         }
     }
 }

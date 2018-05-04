@@ -5,40 +5,37 @@ using System.Text;
 
 namespace AEDCore.Models
 {
-    public class ClusterModel
+    public class ClusterModel : ICloneable
     {
-        public SymptomModel Centroid { get; set; }
-
-        public List<SymptomModel> Symptoms { get; private set; } = new List<SymptomModel>();
-
-        public bool IsDirty { get; private set; } = true;
-
-        public string Name { get; set; }
+        public EventModel Centroid { get; set; }
+        
+        public List<EventModel> Events { get; set; }
+        
+        public EventType Type { get; set; }
 
         public void CalculateCentroid()
         {
-            if (Symptoms.Count <= 0)
-            {
-                IsDirty = false;
-
-                return;
-            }
-
-            var tempCentroid = new int[Centroid.Count];
-
-            Centroid.Symptom.CopyTo(tempCentroid, 0);
-
+            if (Events.Count <= 0) return;
+            
             // calculate average for every part of centroid symptom
-            for (var index = 0; index < Centroid.Count; index++)
+            for (var index = 0; index < Centroid.SymptomModel.Length; index++)
             {
                 // sumarize parts of symptoms
-                Symptoms.ForEach(symptom => Centroid.Symptom[index] += symptom.Symptom[index]);
+                Events.ForEach(symptom => Centroid.SymptomModel.Symptom[index] += symptom.SymptomModel.Symptom[index]);
 
                 // divide sum by symptoms count
-                Centroid.Symptom[index] /= Symptoms.Count;
+                Centroid.SymptomModel.Symptom[index] /= Events.Count;
             }
+        }
 
-            IsDirty = !Enumerable.SequenceEqual(tempCentroid, Centroid.Symptom);
+        public object Clone()
+        {
+            return new ClusterModel
+            {
+                Centroid = Centroid.Clone() as EventModel,
+                Events = Events.Select(e => e.Clone() as EventModel).ToList(),
+                Type = Type
+            };
         }
     }
 }

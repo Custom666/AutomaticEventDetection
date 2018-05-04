@@ -12,7 +12,9 @@ namespace AEDCore
         {
             try
             {
-                return File.ReadAllLines(filename).Select(line => EventModelFactory.CreateEventModel(line.Split(";"))).ToList();
+                return File.ReadAllLines(filename)
+                    .Select(line => EventModelFactory.CreateEventModel(line.Split(";").ToArray()))
+                    .ToList();
             }
             catch (Exception e)
             {

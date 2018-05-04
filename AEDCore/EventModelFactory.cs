@@ -27,13 +27,18 @@ namespace AEDCore
             // TODO throw reasonable exception
             if (!EventTypeExtension.TryParseEventType(model[1], out var eventType))
                 throw new Exception();
-            
+
             // TODO throw reasonable exception
-            if (!DateTime.TryParseExact(model[4], 
+            if (!DateTime.TryParseExact(model[4],
                                         "ddd MMM dd HH:mm:ss CET yyyy",
-                                        CultureInfo.InvariantCulture, 
-                                        DateTimeStyles.AllowWhiteSpaces, 
-                                        out var datetime))
+                                        CultureInfo.InvariantCulture,
+                                        DateTimeStyles.AllowWhiteSpaces,
+                                        out var datetime)
+             && !DateTime.TryParseExact(model[4],
+                                        "ddd MMM dd HH:mm:ss CEST yyyy",
+                                        CultureInfo.InvariantCulture,
+                                        DateTimeStyles.AllowWhiteSpaces,
+                                        out datetime))
                 throw new Exception();
 
             return new EventModel

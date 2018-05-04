@@ -69,6 +69,10 @@
                     result = EventType.Other;
 
                     break;
+
+                default:
+
+                    return false;
             }
 
             return result != null;

@@ -11,10 +11,8 @@ namespace AEDCore.SymptomAlgorithms
         private static readonly char[] WORD_SPLIT_PATTERN = 
             {' ', ',', '.', '!', '?', ':', ';', '(', ')', '/', '\\', '-', '"', '–', '‘', '|', '“'};
 
-        public IList<SymptomModel> GenerateSymptoms(IList<EventModel> models)
+        public void GenerateSymptoms(IList<EventModel> models)
         {
-            var result = new List<SymptomModel>();
-
             // initialize dictionary
             var dictionary = getDictionary(models.Select(m => m.Message).ToArray());
 
@@ -36,10 +34,8 @@ namespace AEDCore.SymptomAlgorithms
                     symptom.Symptom[index]++;
                 }
 
-                result.Add(symptom);
+                eventModel.SymptomModel = symptom;
             }
-
-            return result;
         }
 
         private IList<string> getDictionary(IEnumerable<string> messages)

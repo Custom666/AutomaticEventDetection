@@ -1,31 +1,56 @@
 ﻿using System;
+using System.Linq;
 
 namespace AEDCore.Models
 {
-    public class SymptomModel
+    public class SymptomModel : ICloneable
     {
-        public int[] Symptom { get; private set; }
+        public double[] Symptom { get; private set; }
 
-        public readonly int Count;
+        public readonly int Length;
 
-        public SymptomModel(int count)
+        public SymptomModel(int length)
         {
-            Count = count;
+            Length = length;
 
-            Symptom = new int[count];
+            Symptom = new double[length];
         }
 
         /// <summary>
-        /// Euclidean  
+        /// Eucleides metric /* Cosine similatiry */
         /// </summary>
         public double Distance(SymptomModel symptom)
         {
             var sum = 0d;
 
-            for (var index = 0; index < Count; index++)
+            for(var index = 0; index < Length; index++)
                 sum += Math.Pow(Symptom[index] - symptom.Symptom[index], 2);
-            
+
             return Math.Sqrt(sum);
+
+            //var dotProduct = DotProduct(Symptom, symptom.Symptom);
+            //var thisSymptomMagnitude = Math.Sqrt(DotProduct(Symptom, Symptom));
+            //var otherSymptomMagnitude = Math.Sqrt(DotProduct(symptom.Symptom, symptom.Symptom));
+
+            //return dotProduct / (thisSymptomMagnitude * otherSymptomMagnitude);
+        }
+        
+        private double DotProduct(double[] vecA, double[] vecB)
+        {   
+            double dotProduct = 0;
+
+            for (var i = 0; i < vecA.Length; i++) dotProduct += (vecA[i] * vecB[i]);
+            
+            return dotProduct;
+        }
+
+        public object Clone()
+        {
+            var symptom = new SymptomModel(Length);
+
+            Symptom.CopyTo(symptom.Symptom, 0);
+
+            return symptom;
         }
     }
 }
