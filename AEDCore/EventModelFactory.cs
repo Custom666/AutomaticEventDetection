@@ -20,15 +20,12 @@ namespace AEDCore
         /// <returns><see cref="EventModel"/> class</returns>
         public static EventModel CreateEventModel(string[] model)
         {
-            // TODO throw reasonable exception
             if (model.Length != 6)
-                throw new Exception();
+                throw new FormatException($"Event in file contain more then 6 information\n: { string.Join(';', model) }");
 
-            // TODO throw reasonable exception
             if (!EventTypeExtension.TryParseEventType(model[1], out var eventType))
-                throw new Exception();
+                throw new FormatException($"Event in file is in wrong type\n: { string.Join(';', model) }");
 
-            // TODO throw reasonable exception
             if (!DateTime.TryParseExact(model[4],
                                         "ddd MMM dd HH:mm:ss CET yyyy",
                                         CultureInfo.InvariantCulture,
@@ -39,7 +36,7 @@ namespace AEDCore
                                         CultureInfo.InvariantCulture,
                                         DateTimeStyles.AllowWhiteSpaces,
                                         out datetime))
-                throw new Exception();
+                throw new FormatException($"Event in file has wrong datetime\n: { string.Join(';', model) }");
 
             return new EventModel
             {

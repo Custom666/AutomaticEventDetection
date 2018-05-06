@@ -1,4 +1,6 @@
-﻿namespace AEDCore
+﻿using System;
+
+namespace AEDCore
 {
     /// <summary>
     /// Type of event
@@ -76,6 +78,32 @@
             }
 
             return result != null;
+        }
+
+        public static string ToString(EventType eventType)
+        {
+            switch (eventType)
+            {
+                case EventType.None: return "-";
+
+                case EventType.Politics: return "po";
+
+                case EventType.Industry: return "pr";
+
+                case EventType.Agriculture: return "ze";
+                    
+                case EventType.Sport: return "sp";
+                    
+                case EventType.Culture: return "ku";
+                    
+                case EventType.Crimes: return "kr";
+                    
+                case EventType.Weather: return "pc";
+                
+                case EventType.Other: return "ji";
+
+                default:  return string.Empty;
+            }
         }
     }
 }

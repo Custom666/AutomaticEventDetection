@@ -7,16 +7,24 @@ namespace AEDCore.Models
 {
     public class ClusterModel : ICloneable
     {
-        public EventModel Centroid { get; set; }
+        public EventModel Centroid { get; private set; }
         
         public List<EventModel> Events { get; set; }
         
         public EventType Type { get; set; }
-
+        
         public void CalculateCentroid()
         {
             if (Events.Count <= 0) return;
+
+            if (Centroid == null) Centroid = new EventModel
+            {
+                SymptomModel = new SymptomModel(Events[0].SymptomModel.Length)
+            };
             
+            for (var i = 0; i < Centroid.SymptomModel.Symptom.Length; i++)
+                Centroid.SymptomModel.Symptom[i] = 0d;
+
             // calculate average for every part of centroid symptom
             for (var index = 0; index < Centroid.SymptomModel.Length; index++)
             {
@@ -30,12 +38,15 @@ namespace AEDCore.Models
 
         public object Clone()
         {
-            return new ClusterModel
+            var result = new ClusterModel
             {
-                Centroid = Centroid.Clone() as EventModel,
                 Events = Events.Select(e => e.Clone() as EventModel).ToList(),
                 Type = Type
             };
+
+            result.CalculateCentroid();
+
+            return result;
         }
     }
 }

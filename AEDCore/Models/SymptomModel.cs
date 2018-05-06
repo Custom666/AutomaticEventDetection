@@ -23,7 +23,7 @@ namespace AEDCore.Models
         {
             var sum = 0d;
 
-            for(var index = 0; index < Length; index++)
+            for (var index = 0; index < Length; index++)
                 sum += Math.Pow(Symptom[index] - symptom.Symptom[index], 2);
 
             return Math.Sqrt(sum);
